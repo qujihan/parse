@@ -2,13 +2,13 @@
  * @brief main program
  *********************************************************************
  * a simple calculator with variables
- * 
+ *
  * sample-files for a artikel in developerworks.ibm.com
  * Author: Christian Hagen, chagen@de.ibm.com
- * 
+ *
  * @par ccalc.c
  * main-program
- * 
+ *
  *********************************************************************
  */
 #include "ccalc.h"
@@ -19,7 +19,7 @@
 /*
  * global variable
  */
-int debug=0;
+int debug = 0;
 
 /*
  * lokal variable
@@ -37,99 +37,93 @@ static char *buffer;
 
 /*--------------------------------------------------------------------
  * dumpChar
- * 
+ *
  * printable version of a char
  *------------------------------------------------------------------*/
-static
-char dumpChar(char c) {
-  if (  isprint(c)  )
+static char dumpChar(char c) {
+  if (isprint(c))
     return c;
   return '@';
 }
 /*--------------------------------------------------------------------
  * dumpString
- * 
+ *
  * printable version of a string upto 100 character
  *------------------------------------------------------------------*/
-static
-char *dumpString(char *s) {
+static char *dumpString(char *s) {
   static char buf[101];
   int i;
   int n = strlen(s);
 
-  if (  n > 100  )
+  if (n > 100)
     n = 100;
 
-  for (i=0; i<n; i++)
+  for (i = 0; i < n; i++)
     buf[i] = dumpChar(s[i]);
   buf[i] = 0;
   return buf;
 }
 /*--------------------------------------------------------------------
  * DumpRow
- * 
+ *
  * dumps the contents of the current row
  *------------------------------------------------------------------*/
-extern
-void DumpRow(void) {
-  if (  nRow == 0  ) {
+extern void DumpRow(void) {
+  if (nRow == 0) {
     int i;
     fprintf(stdout, "       |");
-    for (i=1; i<71; i++)
-      if (  i % 10 == 0  )
-        fprintf(stdout, ":"); 
-      else if (  i % 5 == 0  )
-        fprintf(stdout, "+"); 
+    for (i = 1; i < 71; i++)
+      if (i % 10 == 0)
+        fprintf(stdout, ":");
+      else if (i % 5 == 0)
+        fprintf(stdout, "+");
       else
         fprintf(stdout, ".");
-    fprintf(stdout, "\n"); 
-  }
-  else 
+    fprintf(stdout, "\n");
+  } else
     fprintf(stdout, "%6d |%.*s", nRow, lBuffer, buffer);
 }
 /*--------------------------------------------------------------------
  * MarkToken
- * 
+ *
  * marks the current read token
  *------------------------------------------------------------------*/
-extern
-void PrintError(char *errorstring, ...) {
+extern void PrintError(char *errorstring, ...) {
   static char errmsg[10000];
   va_list args;
 
-  int start=nTokenStart;
-  int end=start + nTokenLength - 1;
+  int start = nTokenStart;
+  int end = start + nTokenLength - 1;
   int i;
 
   /*================================================================*/
   /* simple version ------------------------------------------------*/
-/*
-    fprintf(stdout, "...... !");
-    for (i=0; i<nBuffer; i++)
-      fprintf(stdout, ".");
-    fprintf(stdout, "^\n");
-*/
+  /*
+      fprintf(stdout, "...... !");
+      for (i=0; i<nBuffer; i++)
+        fprintf(stdout, ".");
+      fprintf(stdout, "^\n");
+  */
 
   /*================================================================*/
   /* a bit more complicate version ---------------------------------*/
-/* */
-  if (  eof  ) {
+  /* */
+  if (eof) {
     fprintf(stdout, "...... !");
-    for (i=0; i<lBuffer; i++)
+    for (i = 0; i < lBuffer; i++)
       fprintf(stdout, ".");
     fprintf(stdout, "^-EOF\n");
-  }
-  else {
+  } else {
     fprintf(stdout, "...... !");
-    for (i=1; i<start; i++)
+    for (i = 1; i < start; i++)
       fprintf(stdout, ".");
-    for (i=start; i<=end; i++)
+    for (i = start; i <= end; i++)
       fprintf(stdout, "^");
-    for (i=end+1; i<lBuffer; i++)
+    for (i = end + 1; i < lBuffer; i++)
       fprintf(stdout, ".");
     fprintf(stdout, "   token%d:%d\n", start, end);
   }
-/* */
+  /* */
 
   /*================================================================*/
   /* print it using variable arguments -----------------------------*/
@@ -141,14 +135,13 @@ void PrintError(char *errorstring, ...) {
 }
 /*--------------------------------------------------------------------
  * getNextLine
- * 
+ *
  * reads a line into the buffer
  *------------------------------------------------------------------*/
-static
-int getNextLine(void) {
+static int getNextLine(void) {
   int i;
   char *p;
-  
+
   /*================================================================*/
   /*----------------------------------------------------------------*/
   nBuffer = 0;
@@ -159,8 +152,8 @@ int getNextLine(void) {
   /*================================================================*/
   /* read a line ---------------------------------------------------*/
   p = fgets(buffer, lMaxBuffer, file);
-  if (  p == NULL  ) {
-    if (  ferror(file)  )
+  if (p == NULL) {
+    if (ferror(file))
       return -1;
     eof = true;
     return 1;
@@ -176,43 +169,41 @@ int getNextLine(void) {
 }
 /*--------------------------------------------------------------------
  * GetNextChar
- * 
+ *
  * reads a character from input for flex
  *------------------------------------------------------------------*/
-extern
-int GetNextChar(char *b, int maxBuffer) {
+extern int GetNextChar(char *b, int maxBuffer) {
   int frc;
-  
+
   /*================================================================*/
   /*----------------------------------------------------------------*/
-  if (  eof  )
+  if (eof)
     return 0;
-  
+
   /*================================================================*/
   /* read next line if at the end of the current -------------------*/
-  while (  nBuffer >= lBuffer  ) {
+  while (nBuffer >= lBuffer) {
     frc = getNextLine();
-    if (  frc != 0  )
+    if (frc != 0)
       return 0;
-    }
+  }
 
   /*================================================================*/
   /* ok, return character ------------------------------------------*/
   b[0] = buffer[nBuffer];
   nBuffer += 1;
 
-  if (  debug  )
-    printf("GetNextChar() => '%c'0x%02x at %d\n",
-                        dumpChar(b[0]), b[0], nBuffer);
-  return b[0]==0?0:1;
+  if (debug)
+    printf("GetNextChar() => '%c'0x%02x at %d\n", dumpChar(b[0]), b[0],
+           nBuffer);
+  return b[0] == 0 ? 0 : 1;
 }
 /*--------------------------------------------------------------------
  * BeginToken
- * 
+ *
  * marks the beginning of a new token
  *------------------------------------------------------------------*/
-extern
-void BeginToken(char *t) {
+extern void BeginToken(char *t) {
   /*================================================================*/
   /* remember last read token --------------------------------------*/
   nTokenStart = nTokenNextStart;
@@ -226,21 +217,19 @@ void BeginToken(char *t) {
   yylloc.last_line = nRow;
   yylloc.last_column = nTokenStart + nTokenLength - 1;
 
-  if (  debug  ) {
+  if (debug) {
     printf("Token '%s' at %d:%d next at %d\n", dumpString(t),
-                        yylloc.first_column,
-                        yylloc.last_column, nTokenNextStart);
+           yylloc.first_column, yylloc.last_column, nTokenNextStart);
   }
 }
 /*--------------------------------------------------------------------
  * main
- * 
+ *
  * the master
  *------------------------------------------------------------------*/
-extern
-int main(int argc, char *argv[]) {
+extern int main(int argc, char *argv[]) {
   int i;
-  char *infile=NULL;
+  char *infile = NULL;
 
   /*================================================================*/
   /*----------------------------------------------------------------*/
@@ -250,31 +239,30 @@ int main(int argc, char *argv[]) {
   printf("           *** author: chagen@de.ibm.com ***           \n");
   printf("  \n");
 
-  for (i=1; i<argc; i++) {
-    if (  strcmp(argv[i], "-debug") == 0  ) {
+  for (i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-debug") == 0) {
       printf("debugging activated\n");
       debug = 1;
-    }
-    else
+    } else
       infile = argv[i];
   }
 
-  if (  infile == NULL  )
+  if (infile == NULL)
     infile = "defs.txt";
 
   /*================================================================*/
   /* opening input -------------------------------------------------*/
   printf("reading file '%s'\n", infile);
   file = fopen(infile, "r");
-  if (  file == NULL  ) {
+  if (file == NULL) {
     printf("cannot open input\n");
     return 12;
-    }
+  }
 
   /*================================================================*/
   /*----------------------------------------------------------------*/
   buffer = malloc(lMaxBuffer);
-  if (  buffer == NULL  ) {
+  if (buffer == NULL) {
     printf("cannot allocate %d bytes of memory\n", lMaxBuffer);
     fclose(file);
     return 12;
@@ -283,7 +271,7 @@ int main(int argc, char *argv[]) {
   /*================================================================*/
   /* parse it ------------------------------------------------------*/
   DumpRow();
-  if (  getNextLine() == 0  )
+  if (getNextLine() == 0)
     yyparse();
 
   /*================================================================*/
