@@ -41,8 +41,9 @@ static char *buffer;
  * printable version of a char
  *------------------------------------------------------------------*/
 static char dumpChar(char c) {
-  if (isprint(c))
+  if (isprint(c)) {
     return c;
+  }
   return '@';
 }
 /*--------------------------------------------------------------------
@@ -55,11 +56,13 @@ static char *dumpString(char *s) {
   int i;
   int n = strlen(s);
 
-  if (n > 100)
+  if (n > 100) {
     n = 100;
+  }
 
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; i++) {
     buf[i] = dumpChar(s[i]);
+  }
   buf[i] = 0;
   return buf;
 }
@@ -72,16 +75,19 @@ extern void DumpRow(void) {
   if (nRow == 0) {
     int i;
     fprintf(stdout, "       |");
-    for (i = 1; i < 71; i++)
-      if (i % 10 == 0)
+    for (i = 1; i < 71; i++) {
+      if (i % 10 == 0) {
         fprintf(stdout, ":");
-      else if (i % 5 == 0)
+      } else if (i % 5 == 0) {
         fprintf(stdout, "+");
-      else
+      } else {
         fprintf(stdout, ".");
+      }
+    }
     fprintf(stdout, "\n");
-  } else
+  } else {
     fprintf(stdout, "%6d |%.*s", nRow, lBuffer, buffer);
+  }
 }
 /*--------------------------------------------------------------------
  * MarkToken
@@ -110,17 +116,21 @@ extern void PrintError(char *errorstring, ...) {
   /* */
   if (eof) {
     fprintf(stdout, "...... !");
-    for (i = 0; i < lBuffer; i++)
+    for (i = 0; i < lBuffer; i++) {
       fprintf(stdout, ".");
+    }
     fprintf(stdout, "^-EOF\n");
   } else {
     fprintf(stdout, "...... !");
-    for (i = 1; i < start; i++)
+    for (i = 1; i < start; i++) {
       fprintf(stdout, ".");
-    for (i = start; i <= end; i++)
+    }
+    for (i = start; i <= end; i++) {
       fprintf(stdout, "^");
-    for (i = end + 1; i < lBuffer; i++)
+    }
+    for (i = end + 1; i < lBuffer; i++) {
       fprintf(stdout, ".");
+    }
     fprintf(stdout, "   token%d:%d\n", start, end);
   }
   /* */
@@ -153,8 +163,9 @@ static int getNextLine(void) {
   /* read a line ---------------------------------------------------*/
   p = fgets(buffer, lMaxBuffer, file);
   if (p == NULL) {
-    if (ferror(file))
+    if (ferror(file)) {
       return -1;
+    }
     eof = true;
     return 1;
   }
@@ -177,15 +188,17 @@ extern int GetNextChar(char *b, int maxBuffer) {
 
   /*================================================================*/
   /*----------------------------------------------------------------*/
-  if (eof)
+  if (eof) {
     return 0;
+  }
 
   /*================================================================*/
   /* read next line if at the end of the current -------------------*/
   while (nBuffer >= lBuffer) {
     frc = getNextLine();
-    if (frc != 0)
+    if (frc != 0) {
       return 0;
+    }
   }
 
   /*================================================================*/
@@ -193,9 +206,10 @@ extern int GetNextChar(char *b, int maxBuffer) {
   b[0] = buffer[nBuffer];
   nBuffer += 1;
 
-  if (debug)
+  if (debug) {
     printf("GetNextChar() => '%c'0x%02x at %d\n", dumpChar(b[0]), b[0],
            nBuffer);
+  }
   return b[0] == 0 ? 0 : 1;
 }
 /*--------------------------------------------------------------------
@@ -230,14 +244,7 @@ extern void BeginToken(char *t) {
 extern int main(int argc, char *argv[]) {
   int i;
   char *infile = NULL;
-
-  /*================================================================*/
-  /*----------------------------------------------------------------*/
   debug = 0;
-  printf("     === sample program for IBM developerWorks ===     \n");
-  printf("  ===  ccalc - a sample calculator with variables ===  \n");
-  printf("           *** author: chagen@de.ibm.com ***           \n");
-  printf("  \n");
 
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-debug") == 0) {
