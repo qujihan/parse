@@ -91,7 +91,7 @@ program
     | statement SEMICOLON
     | program statement error SEMICOLON 
       {
-      yyerrok;
+        yyerrok;
       }
     ;
 statement

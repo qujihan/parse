@@ -24,11 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
  * global variable
  */
 extern int debug;
+
+static int lex_debug = 1;
 
 /*
  * lex & parse

@@ -12,6 +12,7 @@
  *********************************************************************
  */
 #include "ccalc.h"
+#include <stdio.h>
 
 #define true 1
 #define false 0
@@ -131,7 +132,7 @@ extern void PrintError(char *errorstring, ...) {
     for (i = end + 1; i < lBuffer; i++) {
       fprintf(stdout, ".");
     }
-    fprintf(stdout, "   token%d:%d\n", start, end);
+    fprintf(stdout, "   row: %d, token%d:%d\n", nRow, start, end);
   }
   /* */
 
